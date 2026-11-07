@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ticketdesk
+      POSTGRES_PASSWORD: ticketdesk
+      POSTGRES_DB: ticketdesk
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ticketdesk"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    environment: &env
+      DATABASE_URL: postgresql+psycopg2://ticketdesk:ticketdesk@db:5432/ticketdesk
+      SECRET_KEY: ${SECRET_KEY:-dev-only-change-me}
+      CORS_ORIGINS: http://localhost:5173
+      RUN_SEED: "1"  # load demo data on start (local only)
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["8000:8000"]
+
+  worker:
+    build: ./backend
+    command: python -m app.worker
+    environment: *env
+    depends_on: [api]
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:8000
+    ports: ["5173:80"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
