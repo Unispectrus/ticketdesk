@@ -7,6 +7,14 @@ Built with **FastAPI, PostgreSQL, SQLAlchemy/Alembic, React + TypeScript, Docker
 
 **Live demo:** https://ticketdesk-blond.vercel.app · **Demo login:** workspace `acme`, `admin@acme.com` / `demo1234`
 
+## Screenshots
+
+![Ticket list](docs/tickets.png)
+
+![Ticket detail](docs/detail.png)
+
+![Admin dashboard](docs/admin.png)
+
 ## Features
 - **Three roles** — customer (own tickets only), agent (all tickets in their org), admin (users + SLA report)
 - **Ticket lifecycle** — Open → In Progress → Resolved → Closed (+ reopen), validated server-side
